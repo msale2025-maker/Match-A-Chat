@@ -1,0 +1,1343 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="icon" href="data:," />
+    <title>Match-A-Chat</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet" />
+    <style>
+      :root {
+        --bg: #eef3e2;
+        --bg-soft: #e3edd2;
+        --bg-blush: #fbe9ec;
+        --surface: #fdfef9;
+        --surface-2: #f0f5e4;
+        --ink: #2c3a22;
+        --ink-soft: #5d6f4e;
+        --ink-faint: #85936f;
+        --line: #cfdcb4;
+        --line-soft: #e0e9cd;
+        --matcha: #5c8a3c;
+        --matcha-deep: #38602a;
+        --matcha-dark: #274d1e;
+        --matcha-bright: #8fbf5f;
+        --matcha-pale: #dcebc2;
+        --foam: #f7f3df;
+        --blush: #e8978a;
+        --blush-soft: #f7d9d2;
+        --pink: #e89ab4;
+        --pink-deep: #c96d8c;
+        --pink-soft: #fbe3ea;
+        --pink-pale: #fdeef3;
+        --bamboo: #cfa96a;
+        --gold: #d9a441;
+        --amber-bg: #fbeccd; --amber-ink: #8a6314; --amber-line: #e8c988;
+        --tier-strong-bg: #38602a; --tier-strong-ink: #f4f9ec;
+        --tier-good-bg: #a9cf7a;   --tier-good-ink: #2c3a22;
+        --tier-light-bg: #e6efc9;  --tier-light-ink: #4c6335;
+        --tier-none-bg: #e3e7da;   --tier-none-ink: #68755a;
+        --shadow: 0 10px 30px rgba(56, 96, 42, .14);
+        --shadow-sm: 0 3px 10px rgba(56, 96, 42, .12);
+        --radius: 18px;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #161d10;
+          --bg-soft: #1d2715;
+          --bg-blush: #2a1a20;
+          --surface: #232f1a;
+          --surface-2: #2a3820;
+          --ink: #eaf2da;
+          --ink-soft: #b3c298;
+          --ink-faint: #84936e;
+          --line: #43552f;
+          --line-soft: #37482a;
+          --matcha: #84b45e;
+          --matcha-deep: #a9cf7a;
+          --matcha-dark: #cdeaa8;
+          --matcha-bright: #9ccb72;
+          --matcha-pale: #3c5227;
+          --foam: #f7f3df;
+          --blush: #e8978a;
+          --blush-soft: #5a3a34;
+          --pink: #e89ab4;
+          --pink-deep: #f0afc6;
+          --pink-soft: #4a2e38;
+          --pink-pale: #3a252e;
+          --bamboo: #cfa96a;
+          --gold: #e3b95c;
+          --amber-bg: #3b2f14; --amber-ink: #e8c988; --amber-line: #6b531f;
+          --tier-strong-bg: #a9cf7a; --tier-strong-ink: #22331a;
+          --tier-good-bg: #5c7f3d;   --tier-good-ink: #eef6dd;
+          --tier-light-bg: #3a4c26;  --tier-light-ink: #cfe3ab;
+          --tier-none-bg: #333d2a;   --tier-none-ink: #a9b795;
+          --shadow: 0 10px 30px rgba(0, 0, 0, .4);
+          --shadow-sm: 0 3px 10px rgba(0, 0, 0, .35);
+        }
+      }
+      * { box-sizing: border-box; }
+      html { scroll-behavior: smooth; }
+      body {
+        margin: 0;
+        font-family: "Nunito", system-ui, sans-serif;
+        background:
+          radial-gradient(900px 480px at 85% -120px, var(--bg-blush), transparent 70%),
+          radial-gradient(700px 420px at -120px 30%, var(--bg-soft), transparent 70%),
+          radial-gradient(620px 420px at 50% 115%, var(--bg-blush), transparent 72%),
+          var(--bg);
+        color: var(--ink);
+        line-height: 1.55;
+        -webkit-font-smoothing: antialiased;
+      }
+      .wrap { max-width: 920px; margin: 0 auto; padding: 22px 18px 70px; }
+      h1, h2, h3, .font-display { font-family: "Baloo 2", "Nunito", sans-serif; }
+      h2 { font-size: 1.55rem; margin: 0 0 4px; letter-spacing: .2px; }
+      h3 { font-size: 1.12rem; margin: 0 0 6px; }
+      p { margin: 0 0 10px; }
+      .lede { color: var(--ink-soft); font-size: 1.02rem; max-width: 62ch; }
+      a { color: var(--matcha-deep); font-weight: 700; }
+      :focus-visible { outline: 3px solid var(--matcha-bright); outline-offset: 2px; border-radius: 6px; }
+
+      /* ---------- Header strip ---------- */
+      .topbar { display: flex; align-items: center; gap: 12px; margin-bottom: 6px; flex-wrap: wrap; }
+      .topbar .cupmark { flex: none; }
+      .topbar .tagline { color: var(--ink-soft); font-weight: 700; font-size: .95rem; }
+      .topbar .fresh-note {
+        margin-left: auto; font-size: .8rem; font-weight: 700; color: var(--pink-deep);
+        background: var(--pink-pale); border: 1.5px dashed var(--pink); border-radius: 999px; padding: 5px 12px;
+        text-align: center; display: inline-flex; align-items: center; gap: 8px;
+      }
+      .topbar .fresh-note button {
+        border: none; background: var(--surface); color: var(--pink-deep); cursor: pointer;
+        font: inherit; font-weight: 800; font-size: .74rem; border-radius: 999px; padding: 2px 9px;
+      }
+      .topbar .fresh-note button:hover { background: var(--pink-soft); }
+
+      /* ---------- Stepper ---------- */
+      .stepper { display: flex; gap: 8px; margin: 18px 0 22px; flex-wrap: wrap; }
+      .stepper button {
+        flex: 1 1 150px; display: flex; align-items: center; gap: 10px;
+        background: var(--surface); border: 2px solid var(--line-soft); color: var(--ink-soft);
+        border-radius: 999px; padding: 8px 14px 8px 8px; cursor: pointer;
+        font-family: "Nunito", sans-serif; font-weight: 800; font-size: .9rem; text-align: left;
+        transition: border-color .2s, background .2s, color .2s;
+      }
+      .stepper button .n {
+        flex: none; width: 30px; height: 30px; border-radius: 50%;
+        background: var(--matcha-pale); color: var(--matcha-deep);
+        display: grid; place-items: center; font-family: "Baloo 2", sans-serif; font-weight: 700;
+      }
+      .stepper button.active { border-color: var(--matcha); color: var(--ink); background: var(--surface); box-shadow: var(--shadow-sm); }
+      .stepper button.active .n { background: var(--matcha); color: #fff; }
+      .stepper button.done .n { background: var(--matcha-deep); color: #fff; }
+      .stepper button:disabled { opacity: .45; cursor: not-allowed; }
+
+      /* ---------- Cards & forms ---------- */
+      .card {
+        background: var(--surface); border: 1.5px solid var(--line-soft);
+        border-radius: var(--radius); box-shadow: var(--shadow); padding: 26px 26px 22px; margin-bottom: 20px;
+        position: relative;
+      }
+      .card::before {
+        content: ""; position: absolute; left: 0; top: 22px; bottom: 22px; width: 4px;
+        border-radius: 999px;
+        background: linear-gradient(180deg, var(--pink) 0%, var(--matcha-bright) 100%);
+        opacity: .5;
+      }
+      .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+      .field { margin-bottom: 16px; }
+      .field label { display: block; font-weight: 800; font-size: .92rem; margin-bottom: 6px; }
+      .field label .opt { color: var(--ink-faint); font-weight: 700; font-size: .8rem; }
+      .field .hint { font-size: .82rem; color: var(--ink-faint); margin-top: 5px; }
+      input[type="text"], input[type="url"], input[type="email"], input[type="date"], textarea, select {
+        width: 100%; font: inherit; color: var(--ink);
+        background: var(--surface-2); border: 1.5px solid var(--line); border-radius: 12px;
+        padding: 11px 13px;
+        transition: border-color .18s, box-shadow .18s;
+      }
+      input:focus, textarea:focus, select:focus { border-color: var(--pink); box-shadow: 0 0 0 3px var(--pink-soft); outline: none; }
+      input::placeholder, textarea::placeholder { color: var(--ink-faint); }
+      textarea { resize: vertical; min-height: 96px; }
+      textarea.tall { min-height: 150px; }
+      .field.error input, .field.error textarea { border-color: var(--blush); }
+      .field .err-msg { display: none; color: var(--blush); font-size: .83rem; font-weight: 700; margin-top: 5px; }
+      .field.error .err-msg { display: block; }
+
+      .btn {
+        display: inline-flex; align-items: center; gap: 8px; cursor: pointer;
+        font-family: "Baloo 2", sans-serif; font-weight: 700; font-size: 1rem;
+        border-radius: 999px; padding: 11px 22px; border: 2px solid transparent;
+        transition: transform .15s, box-shadow .15s, background .15s;
+        text-decoration: none;
+      }
+      .btn:active { transform: scale(.97); }
+      .btn-primary { background: var(--matcha); color: #fff; box-shadow: var(--shadow-sm); }
+      .btn-primary:hover { background: var(--matcha-deep); }
+      .btn-ghost { background: transparent; color: var(--matcha-deep); border-color: var(--line); }
+      .btn-ghost:hover { border-color: var(--pink); background: var(--pink-pale); color: var(--pink-deep); }
+      .btn-small { font-size: .88rem; padding: 7px 15px; }
+      .btn[disabled] { opacity: .45; cursor: not-allowed; box-shadow: none; }
+      .row-actions { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-top: 8px; }
+      .spacer { flex: 1; }
+
+      /* ---------- Keyword chips ---------- */
+      .chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0 4px; }
+      .chip {
+        display: inline-flex; align-items: center; gap: 7px;
+        background: var(--matcha-pale); color: var(--ink);
+        border: 1.5px solid var(--line); border-radius: 999px; padding: 5px 8px 5px 13px;
+        font-weight: 800; font-size: .88rem;
+      }
+      .chip .dept { font-weight: 700; font-size: .74rem; color: var(--matcha-deep); background: var(--surface); border-radius: 999px; padding: 1px 8px; }
+      .chip button {
+        border: none; background: var(--surface); color: var(--ink-soft); cursor: pointer;
+        width: 20px; height: 20px; border-radius: 50%; font-size: .8rem; line-height: 1;
+        display: grid; place-items: center; padding: 0;
+      }
+      .chip button:hover { background: var(--pink-soft); color: var(--pink-deep); }
+      .chip.from-you { background: var(--pink-soft); border-color: var(--pink); }
+      .chip.from-you .dept { color: var(--pink-deep); }
+      .inline-form { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+      .inline-form input { flex: 1 1 180px; }
+      .inline-form select { flex: 0 1 230px; }
+      .legend { display: flex; gap: 16px; flex-wrap: wrap; font-size: .82rem; color: var(--ink-soft); font-weight: 700; margin-top: 10px; }
+      .legend .dot { display: inline-block; width: 11px; height: 11px; border-radius: 50%; margin-right: 5px; vertical-align: -1px; }
+
+      /* ---------- Search link groups ---------- */
+      details.linkgroup { border: 1.5px solid var(--line-soft); border-radius: 14px; margin-bottom: 10px; background: var(--surface-2); }
+      details.linkgroup summary {
+        cursor: pointer; padding: 12px 16px; font-family: "Baloo 2", sans-serif; font-weight: 700; font-size: 1rem;
+        list-style: none; display: flex; align-items: center; gap: 8px;
+      }
+      details.linkgroup summary::-webkit-details-marker { display: none; }
+      details.linkgroup summary .chev { margin-left: auto; color: var(--ink-faint); transition: transform .2s; }
+      details.linkgroup[open] summary .chev { transform: rotate(180deg); }
+      .linklist { list-style: none; margin: 0; padding: 0 16px 14px; display: grid; gap: 8px; }
+      .linklist a {
+        display: flex; align-items: center; gap: 10px; text-decoration: none;
+        background: var(--surface); border: 1.5px solid var(--line-soft); border-radius: 12px; padding: 10px 13px;
+        font-size: .92rem; color: var(--ink);
+      }
+      .linklist a:hover { border-color: var(--pink); }
+      .linklist a .kind { flex: none; font-size: .72rem; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; background: var(--matcha-pale); color: var(--matcha-deep); border-radius: 999px; padding: 2px 9px; }
+      .linklist a .arrow { margin-left: auto; color: var(--pink-deep); font-weight: 800; }
+
+      /* ---------- Lead lists ---------- */
+      .lead-mini { display: flex; gap: 12px; align-items: flex-start; border: 1.5px solid var(--line-soft); border-radius: 14px; padding: 13px 15px; margin-bottom: 10px; background: var(--surface); }
+      .lead-mini .who { flex: 1; min-width: 0; }
+      .lead-mini .who b { font-family: "Baloo 2", sans-serif; font-size: 1.02rem; }
+      .lead-mini .who .sub { color: var(--ink-soft); font-size: .87rem; }
+      .lead-mini .remove { flex: none; border: none; background: var(--surface-2); color: var(--ink-soft); border-radius: 999px; padding: 5px 12px; cursor: pointer; font-weight: 800; font-size: .8rem; }
+      .lead-mini .remove:hover { background: var(--pink-soft); color: var(--pink-deep); }
+
+      /* ---------- Dashboard ---------- */
+      .dash-toolbar { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 14px; }
+      .dash-toolbar .seg { display: inline-flex; background: var(--surface-2); border: 1.5px solid var(--line); border-radius: 999px; padding: 3px; gap: 2px; }
+      .dash-toolbar .seg button { border: none; background: transparent; color: var(--ink-soft); font: inherit; font-weight: 800; font-size: .82rem; border-radius: 999px; padding: 5px 12px; cursor: pointer; }
+      .dash-toolbar .seg button[aria-pressed="true"] { background: var(--matcha); color: #fff; }
+      .summary-strip { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 18px; }
+      .summary-strip .stat {
+        flex: 1 1 130px; background: var(--surface-2); border: 1.5px solid var(--line-soft);
+        border-radius: 14px; padding: 12px 15px; text-align: center;
+      }
+      .summary-strip .stat.pink { background: var(--pink-pale); border-color: var(--pink); }
+      .summary-strip .stat.pink .num { color: var(--pink-deep); }
+      .summary-strip .stat .num { font-family: "Baloo 2", sans-serif; font-size: 1.6rem; font-weight: 800; color: var(--matcha-deep); line-height: 1.1; }
+      .summary-strip .stat .lbl { font-size: .8rem; font-weight: 800; color: var(--ink-soft); }
+      .lead-card { border: 1.5px solid var(--line-soft); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; background: var(--surface); box-shadow: var(--shadow-sm); }
+      .lead-card .head { display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-start; }
+      .lead-card .head .who { flex: 1 1 220px; min-width: 0; }
+      .lead-card .head .who b { font-family: "Baloo 2", sans-serif; font-size: 1.2rem; }
+      .lead-card .head .who .sub { color: var(--ink-soft); font-size: .9rem; }
+      .tier { flex: none; border-radius: 999px; padding: 5px 13px; font-weight: 800; font-size: .82rem; }
+      .tier-strong { background: var(--tier-strong-bg); color: var(--tier-strong-ink); }
+      .tier-good { background: var(--tier-good-bg); color: var(--tier-good-ink); }
+      .tier-light { background: var(--tier-light-bg); color: var(--tier-light-ink); }
+      .tier-none { background: var(--tier-none-bg); color: var(--tier-none-ink); }
+      .matchline { font-size: .86rem; color: var(--ink-soft); margin: 10px 0 2px; font-weight: 700; }
+      .match-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+      .match-chips span { background: var(--pink-pale); border: 1px solid var(--pink); color: var(--pink-deep); border-radius: 999px; padding: 2px 10px; font-size: .8rem; font-weight: 700; }
+      .status-toggle { display: inline-flex; background: var(--surface-2); border: 1.5px solid var(--line); border-radius: 999px; padding: 3px; gap: 2px; margin: 12px 0 4px; flex-wrap: wrap; }
+      .status-toggle button { border: none; background: transparent; color: var(--ink-soft); font: inherit; font-weight: 800; font-size: .83rem; border-radius: 999px; padding: 5px 13px; cursor: pointer; }
+      .status-toggle button[aria-pressed="true"] { background: var(--matcha); color: #fff; }
+      .status-toggle button[aria-pressed="true"].st-replied { background: var(--pink-deep); color: #fff; }
+      .nudge { display: inline-flex; align-items: center; gap: 7px; margin: 10px 0 2px; font-size: .84rem; font-weight: 800; background: var(--amber-bg); color: var(--amber-ink); border: 1px solid var(--amber-line); border-radius: 10px; padding: 7px 12px; }
+      .track-row { display: flex; gap: 10px; flex-wrap: wrap; align-items: flex-end; margin-top: 10px; }
+      .track-row .field { margin-bottom: 0; flex: 1 1 150px; }
+      .track-row .field.notes { flex: 2 1 260px; }
+      .track-row .field label { font-size: .78rem; color: var(--ink-soft); }
+      .draft { margin-top: 12px; border-top: 1.5px dashed var(--line); padding-top: 14px; }
+      .draft label { font-size: .82rem; font-weight: 800; color: var(--ink-soft); display: block; margin-bottom: 5px; }
+      .draft textarea { min-height: 210px; font-size: .94rem; }
+      .draft summary { cursor: pointer; font-family: "Baloo 2", sans-serif; font-weight: 700; color: var(--matcha-deep); list-style: none; }
+      .draft summary::-webkit-details-marker { display: none; }
+      .pub-note { font-size: .86rem; color: var(--ink-soft); background: var(--surface-2); border-radius: 10px; padding: 8px 12px; margin-top: 10px; }
+
+      /* ---------- Empty / success states ---------- */
+      .empty-state { text-align: center; padding: 18px 10px 8px; }
+      .empty-state p { color: var(--ink-soft); max-width: 46ch; margin: 6px auto 0; }
+      .cheers-cup { transform-box: fill-box; transform-origin: 50% 85%; }
+      .cheers-left { animation: clinkL 2.6s ease-in-out infinite; }
+      .cheers-right { animation: clinkR 2.6s ease-in-out infinite; }
+      .cheers-spark { transform-box: fill-box; transform-origin: center; animation: sparkle 2.6s ease-in-out infinite; }
+      @keyframes clinkL { 0%, 55%, 100% { transform: rotate(-7deg) translateX(0); } 68%, 82% { transform: rotate(3deg) translateX(9px); } }
+      @keyframes clinkR { 0%, 55%, 100% { transform: rotate(7deg) translateX(0); } 68%, 82% { transform: rotate(-3deg) translateX(-9px); } }
+      @keyframes sparkle { 0%, 58%, 100% { opacity: 0; transform: scale(.4); } 70%, 84% { opacity: 1; transform: scale(1); } }
+
+      /* ---------- Whisking loader ---------- */
+      .loader-overlay {
+        position: fixed; inset: 0; z-index: 60; display: none;
+        background: color-mix(in srgb, var(--bg) 82%, transparent);
+        backdrop-filter: blur(3px);
+        align-items: center; justify-content: center; flex-direction: column; gap: 6px; padding: 20px; text-align: center;
+      }
+      .loader-overlay.show { display: flex; }
+      .loader-overlay .caption { font-family: "Baloo 2", sans-serif; font-size: 1.3rem; font-weight: 700; color: var(--matcha-deep); }
+      .loader-overlay .sub { color: var(--ink-soft); font-weight: 700; font-size: .92rem; }
+      .whisk-group { transform-box: fill-box; transform-origin: 50% 6%; animation: whiskRock .45s ease-in-out infinite alternate; }
+      @keyframes whiskRock { from { transform: rotate(-17deg) translateY(0); } to { transform: rotate(17deg) translateY(5px); } }
+      .drop { opacity: 0; animation: dropFly 1s ease-out infinite; }
+      .drop.d1 { animation-delay: 0s; } .drop.d2 { animation-delay: .18s; } .drop.d3 { animation-delay: .36s; }
+      .drop.d4 { animation-delay: .54s; } .drop.d5 { animation-delay: .72s; } .drop.d6 { animation-delay: .27s; }
+      @keyframes dropFly {
+        0% { opacity: 0; transform: translate(0, 0) scale(.6); }
+        18% { opacity: 1; }
+        100% { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(1); }
+      }
+      .foam { animation: foamPulse 1.2s ease-in-out infinite alternate; transform-box: fill-box; transform-origin: center; }
+      @keyframes foamPulse { from { transform: scale(.94); } to { transform: scale(1.05); } }
+
+      /* ---------- Toast ---------- */
+      .toast {
+        position: fixed; left: 50%; bottom: 26px; transform: translate(-50%, 90px); z-index: 70;
+        background: var(--surface); border: 2px solid var(--pink); color: var(--ink);
+        border-radius: 999px; padding: 9px 20px 9px 12px; display: flex; align-items: center; gap: 10px;
+        font-weight: 800; box-shadow: var(--shadow); transition: transform .35s cubic-bezier(.2, .9, .3, 1.2); max-width: 92vw;
+      }
+      .toast.show { transform: translate(-50%, 0); }
+
+      /* ---------- In-page modal dialog ---------- */
+      .dialog-backdrop {
+        position: fixed; inset: 0; z-index: 80; display: none;
+        background: rgba(43, 34, 28, .45); padding: 20px;
+        align-items: center; justify-content: center;
+      }
+      .dialog-backdrop.show { display: flex; }
+      .dialog-card {
+        background: var(--surface); border: 2px solid var(--pink); border-radius: 16px;
+        box-shadow: var(--shadow); max-width: 420px; width: 100%; padding: 22px 22px 18px;
+        animation: panelIn .25s ease;
+      }
+      .dialog-card p { font-weight: 700; font-size: 1rem; line-height: 1.45; margin: 0 0 16px; }
+      .dialog-actions { display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap; }
+
+      .foot-note { text-align: center; color: var(--ink-faint); font-size: .85rem; font-weight: 600; margin-top: 8px; }
+      .step-panel { display: none; }
+      .step-panel.active { display: block; animation: panelIn .35s ease; }
+      @keyframes panelIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+      .section-gap { height: 6px; }
+      .small { font-size: .88rem; color: var(--ink-soft); }
+      .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+
+      @media (max-width: 640px) {
+        .grid2 { grid-template-columns: 1fr; }
+        .card { padding: 20px 17px 17px; }
+        .topbar .fresh-note { margin-left: 0; order: 3; width: 100%; justify-content: center; }
+        .stepper button { flex: 1 1 44%; font-size: .83rem; }
+        .inline-form select { flex: 1 1 100%; }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+        html { scroll-behavior: auto; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <div class="topbar">
+        <svg class="cupmark" width="40" height="40" viewBox="0 0 48 48" aria-hidden="true">
+          <path d="M8 16h28v14a10 10 0 0 1-10 10h-8A10 10 0 0 1 8 30z" fill="#5c8a3c"/>
+          <path d="M36 20h3a5 5 0 0 1 0 10h-3" fill="none" stroke="#5c8a3c" stroke-width="3.4"/>
+          <ellipse cx="22" cy="16" rx="14" ry="3.6" fill="#8fbf5f"/>
+          <circle cx="18" cy="28" r="1.8" fill="#22331a"/><circle cx="27" cy="28" r="1.8" fill="#22331a"/>
+          <path d="M20 32.4q2.4 2 4.6 0" fill="none" stroke="#22331a" stroke-width="1.8" stroke-linecap="round"/>
+          <circle cx="14.4" cy="31" r="2.1" fill="#e89ab4" opacity=".8"/><circle cx="30.6" cy="31" r="2.1" fill="#e89ab4" opacity=".8"/>
+        </svg>
+        <span class="tagline">Find your people, one coffee chat at a time.</span>
+        <span class="fresh-note">Saved in this browser only <button type="button" id="btn-clear-all">Start fresh</button></span>
+      </div>
+
+      <nav class="stepper" id="stepper" aria-label="Progress">
+        <button type="button" data-step="1" class="active"><span class="n">1</span> Your profile</button>
+        <button type="button" data-step="2" disabled><span class="n">2</span> Keywords</button>
+        <button type="button" data-step="3" disabled><span class="n">3</span> Find faculty</button>
+        <button type="button" data-step="4" disabled><span class="n">4</span> Ranked dashboard</button>
+      </nav>
+
+      <!-- ============ STEP 1 : PROFILE ============ -->
+      <section class="step-panel active" id="panel-1" tabindex="-1" aria-labelledby="h-step1">
+        <div class="card">
+          <h2 id="h-step1">Tell us about you</h2>
+          <p class="lede">A few details about where you study and where you want to go. Match-A-Chat turns them into research keywords, search links, and email drafts — all right here in your browser.</p>
+          <div class="section-gap"></div>
+          <div class="grid2">
+            <div class="field" id="f-name">
+              <label for="in-name">Your name</label>
+              <input type="text" id="in-name" placeholder="e.g. Jordan Rivera" autocomplete="name" />
+              <div class="err-msg">Add your name — it signs your emails.</div>
+            </div>
+            <div class="field">
+              <label for="in-linkedin">LinkedIn profile URL <span class="opt">(optional)</span></label>
+              <input type="url" id="in-linkedin" placeholder="https://www.linkedin.com/in/you" />
+              <div class="hint">Just the link — no sign-in. It goes in your email signature so people can look you up.</div>
+            </div>
+          </div>
+          <div class="grid2">
+            <div class="field" id="f-uni">
+              <label for="in-uni">University</label>
+              <input type="text" id="in-uni" placeholder="e.g. Texas A&amp;M University" />
+              <div class="err-msg">Which university should we search?</div>
+            </div>
+            <div class="field">
+              <label for="in-loc">Location <span class="opt">(optional)</span></label>
+              <input type="text" id="in-loc" placeholder="e.g. College Station, TX" />
+            </div>
+          </div>
+          <div class="field">
+            <label for="in-domain">University website domain <span class="opt">(optional, but powerful)</span></label>
+            <input type="text" id="in-domain" placeholder="e.g. tamu.edu" />
+            <div class="hint">With the domain, your search links can target the university's own sites directly (like <i>site:tamu.edu</i>).</div>
+          </div>
+          <div class="field" id="f-goals">
+            <label for="in-goals">Career goals &amp; preferences</label>
+            <textarea id="in-goals" placeholder="e.g. I'm a junior hoping to do research in machine learning and data science, ideally in a lab working on healthcare applications. I'm interested in grad school and want experience with NLP and statistical modeling."></textarea>
+            <div class="hint">Write it like you'd tell a friend — topics, dream roles, industries, skills you want to build. This is what your keywords are brewed from.</div>
+            <div class="err-msg">A sentence or two about your goals is what powers the keyword builder.</div>
+          </div>
+          <div class="field">
+            <label for="in-resume">Resume <span class="opt">(paste the text)</span></label>
+            <textarea id="in-resume" class="tall" placeholder="Paste your resume text here — coursework, projects, jobs, skills. Your email drafts will pull a relevant line from it."></textarea>
+            <div class="hint">Stays in your browser only. Used to ground your outreach drafts in your actual experience.</div>
+          </div>
+          <div class="row-actions">
+            <button type="button" class="btn btn-primary" id="btn-whisk">Whisk my keywords 🍵</button>
+            <span class="small">Takes about two seconds — worth watching.</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ STEP 2 : KEYWORDS ============ -->
+      <section class="step-panel" id="panel-2" tabindex="-1" aria-labelledby="h-step2">
+        <div class="card">
+          <h2 id="h-step2">Your keyword blend</h2>
+          <p class="lede">Brewed from your goals. Keep the ones that taste right, toss the rest, and add your own. These keywords drive your faculty searches <em>and</em> rank your leads later.</p>
+          <div class="section-gap"></div>
+          <h3>Suggested keywords</h3>
+          <div class="chips" id="chips-suggested"></div>
+          <div id="own-wrap" style="display:none">
+            <h3 style="margin-top:18px">From your own words</h3>
+            <div class="chips" id="chips-own"></div>
+          </div>
+          <div class="legend">
+            <span><span class="dot" style="background:var(--matcha-pale);border:1px solid var(--line)"></span>Suggested topic — tag shows the department to search</span>
+            <span><span class="dot" style="background:var(--pink-soft);border:1px solid var(--pink)"></span>Pulled from your goal text</span>
+          </div>
+          <div class="inline-form">
+            <input type="text" id="in-newkw" placeholder="Add your own keyword, e.g. bioinformatics" />
+            <select id="in-newkw-dept" aria-label="Department for the new keyword">
+              <option value="">Department to search (optional)</option>
+            </select>
+            <button type="button" class="btn btn-ghost btn-small" id="btn-addkw">Add keyword</button>
+          </div>
+          <p class="small" id="kw-count" style="margin-top:12px"></p>
+          <div class="row-actions">
+            <button type="button" class="btn btn-ghost" data-goto="1">← Back</button>
+            <button type="button" class="btn btn-ghost" id="btn-csv">Download keyword CSV</button>
+            <span class="spacer"></span>
+            <button type="button" class="btn btn-primary" id="btn-to-step3">Find faculty →</button>
+          </div>
+          <p class="hint" style="margin-top:10px">The CSV has two columns: <b>keyword</b> and <b>department site to search</b> — one row per keyword–department pair, ready to open in a spreadsheet.</p>
+        </div>
+      </section>
+
+      <!-- ============ STEP 3 : FIND FACULTY ============ -->
+      <section class="step-panel" id="panel-3" tabindex="-1" aria-labelledby="h-step3">
+        <div class="card">
+          <h2 id="h-step3">Go find your people</h2>
+          <p class="lede">These links do the hunting for you — each one runs a ready-made search for faculty who match a keyword, on your university's own sites and beyond. When you find someone promising, paste their details into the lead form below.</p>
+          <div class="section-gap"></div>
+          <div id="search-links"></div>
+        </div>
+
+        <div class="card">
+          <h2>Add a lead</h2>
+          <p class="lede">Found someone? Drop in what their profile says. The more you add — especially a recent publication — the better their match rank and email draft will be.</p>
+          <div class="field">
+            <label for="in-paste">Quick paste <span class="opt">(optional)</span></label>
+            <textarea id="in-paste" style="min-height:70px" placeholder="Paste a chunk of their profile page here and we'll pull out the email, profile link, and a likely name for you."></textarea>
+            <div class="row-actions">
+              <button type="button" class="btn btn-ghost btn-small" id="btn-parse">Autofill from paste</button>
+            </div>
+          </div>
+          <div class="grid2">
+            <div class="field" id="f-leadname">
+              <label for="in-lead-name">Name</label>
+              <input type="text" id="in-lead-name" placeholder="e.g. Dr. Priya Nair" />
+              <div class="err-msg">A lead needs a name.</div>
+            </div>
+            <div class="field">
+              <label for="in-lead-title">Title / department</label>
+              <input type="text" id="in-lead-title" placeholder="e.g. Professor, Computer Science" />
+            </div>
+          </div>
+          <div class="grid2">
+            <div class="field">
+              <label for="in-lead-email">Email <span class="opt">(optional)</span></label>
+              <input type="email" id="in-lead-email" placeholder="e.g. pnair@university.edu" />
+            </div>
+            <div class="field">
+              <label for="in-lead-url">Profile URL <span class="opt">(optional)</span></label>
+              <input type="url" id="in-lead-url" placeholder="https://…" />
+            </div>
+          </div>
+          <div class="field">
+            <label for="in-lead-interests">Research interests</label>
+            <textarea id="in-lead-interests" style="min-height:74px" placeholder="Copy from their profile — e.g. natural language processing, machine learning for healthcare, dialogue systems"></textarea>
+            <div class="hint">This is the text your keywords are matched against, so paste generously.</div>
+          </div>
+          <div class="grid2">
+            <div class="field">
+              <label for="in-lead-pub">Recent publication <span class="opt">(optional, recommended)</span></label>
+              <input type="text" id="in-lead-pub" placeholder="Paper title" />
+            </div>
+            <div class="field">
+              <label for="in-lead-pubmeta">Year / venue <span class="opt">(optional)</span></label>
+              <input type="text" id="in-lead-pubmeta" placeholder="e.g. 2025, ACL" />
+            </div>
+          </div>
+          <div class="row-actions">
+            <button type="button" class="btn btn-primary" id="btn-addlead">Add lead</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>Your leads so far</h2>
+          <div id="leads-list"></div>
+          <div class="row-actions" style="margin-top:14px">
+            <button type="button" class="btn btn-ghost" data-goto="2">← Back to keywords</button>
+            <span class="spacer"></span>
+            <button type="button" class="btn btn-primary" id="btn-to-step4">Brew my dashboard →</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ STEP 4 : DASHBOARD ============ -->
+      <section class="step-panel" id="panel-4" tabindex="-1" aria-labelledby="h-step4">
+        <div class="card">
+          <h2 id="h-step4">Your ranked dashboard</h2>
+          <p class="lede">Leads are ranked by how many of your keywords show up in their research interests, title, and publication. Each draft is written from <em>their</em> publication and <em>your</em> resume — edit freely, then copy it or open it in your mail app.</p>
+          <p class="pub-note" style="margin-top:4px">Status, dates, and notes are <b>yours to fill in</b> — Match-A-Chat never reads your inbox or sends anything, so it can't know when someone actually replies. It's an honest scratchpad, not a mind reader.</p>
+          <div class="section-gap"></div>
+          <div class="summary-strip" id="summary-strip"></div>
+          <div class="dash-toolbar">
+            <div class="seg" id="dash-filter" role="group" aria-label="Filter leads">
+              <button type="button" data-filter="all" aria-pressed="true">All</button>
+              <button type="button" data-filter="not-contacted" aria-pressed="false">To contact</button>
+              <button type="button" data-filter="sent" aria-pressed="false">Awaiting reply</button>
+              <button type="button" data-filter="replied" aria-pressed="false">Replied</button>
+            </div>
+            <span class="spacer"></span>
+            <button type="button" class="btn btn-ghost btn-small" id="btn-leads-csv">Export leads CSV</button>
+          </div>
+          <div id="dashboard"></div>
+          <div class="row-actions">
+            <button type="button" class="btn btn-ghost" data-goto="3">← Back to leads</button>
+          </div>
+        </div>
+      </section>
+
+      <p class="foot-note">Match-A-Chat runs entirely in this tab and saves your progress to this browser only (nothing is uploaded). No email is ever sent from here — drafts open in your own mail app, so you're always the one who hits send. Use <b>Start fresh</b> up top to wipe everything.</p>
+    </div>
+
+    <!-- ============ WHISKING LOADER ============ -->
+    <div class="loader-overlay" id="loader" role="status" aria-live="polite">
+      <svg width="280" height="225" viewBox="0 0 300 240" aria-hidden="true">
+        <g fill="#7fb069">
+          <circle class="drop d1" style="--dx:-58px;--dy:-46px" cx="92" cy="112" r="5.5"/>
+          <circle class="drop d2" style="--dx:52px;--dy:-58px" cx="205" cy="108" r="6.5"/>
+          <circle class="drop d3" style="--dx:-30px;--dy:-70px" cx="118" cy="104" r="4.5"/>
+          <circle class="drop d4" style="--dx:34px;--dy:-38px" cx="182" cy="116" r="4"/>
+          <circle class="drop d5" style="--dx:-74px;--dy:-16px" cx="84" cy="128" r="4"/>
+          <circle class="drop d6" style="--dx:76px;--dy:-24px" cx="214" cy="126" r="5"/>
+        </g>
+        <g class="whisk-group">
+          <rect x="145" y="2" width="10" height="36" rx="5" fill="#cfa96a"/>
+          <g stroke="#dbb87c" stroke-width="3.2" fill="none" stroke-linecap="round">
+            <path d="M150 36 C 138 58, 130 74, 128 96"/>
+            <path d="M150 36 C 144 58, 140 76, 139 98"/>
+            <path d="M150 36 C 150 58, 150 78, 150 100"/>
+            <path d="M150 36 C 156 58, 160 76, 161 98"/>
+            <path d="M150 36 C 162 58, 170 74, 172 96"/>
+          </g>
+          <path d="M128 92 Q150 104 172 92" stroke="#b98d4f" stroke-width="3" fill="none"/>
+        </g>
+        <path d="M58 118 h184 c0 44 -28 68 -58 68 h-68 c-30 0 -58 -24 -58 -68 z" fill="#38602a"/>
+        <path d="M58 118 h184 c0 10 -3 19 -7 27 H65 c-4 -8 -7 -17 -7 -27z" fill="#2c4f20" opacity=".45"/>
+        <rect x="118" y="188" width="64" height="10" rx="4" fill="#2c4f20"/>
+        <ellipse cx="150" cy="118" rx="92" ry="13" fill="#8fbf5f"/>
+        <g class="foam" fill="#cfe8ae">
+          <circle cx="118" cy="115" r="7"/><circle cx="150" cy="120" r="9"/><circle cx="182" cy="114" r="6"/><circle cx="96" cy="119" r="4.5"/><circle cx="203" cy="119" r="4.5"/>
+        </g>
+        <circle cx="128" cy="152" r="3.4" fill="#f4f9ec"/><circle cx="172" cy="152" r="3.4" fill="#f4f9ec"/>
+        <path d="M143 160 q7 6 14 0" stroke="#f4f9ec" stroke-width="3" fill="none" stroke-linecap="round"/>
+        <circle cx="114" cy="160" r="5" fill="#e89ab4" opacity=".85"/><circle cx="186" cy="160" r="5" fill="#e89ab4" opacity=".85"/>
+      </svg>
+      <div class="caption" id="loader-caption">Whisking up your keywords…</div>
+      <div class="sub" id="loader-sub">Reading your goals and blending topics</div>
+    </div>
+
+    <!-- ============ TOAST ============ -->
+    <div class="dialog-backdrop" id="dialog-el">
+      <div class="dialog-card" role="dialog" aria-modal="true" aria-labelledby="dialog-msg">
+        <p id="dialog-msg"></p>
+        <div class="dialog-actions">
+          <button type="button" class="btn btn-ghost btn-small" id="dialog-cancel">Cancel</button>
+          <button type="button" class="btn btn-primary btn-small" id="dialog-ok">Yes, go ahead</button>
+        </div>
+      </div>
+    </div>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    "use strict";
+    const $ = (s, el) => (el || document).querySelector(s);
+    const $$ = (s, el) => Array.from((el || document).querySelectorAll(s));
+    const esc = (s) => String(s == null ? "" : s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+    let uidSeq = 1;
+    const uid = () => "id" + (uidSeq++) + "_" + Math.random().toString(36).slice(2, 6);
+
+    /* ---------- Cheers cups illustration (empty / success states) ---------- */
+    const CHEERS_SVG = `
+    <svg width="240" height="150" viewBox="0 0 320 190" aria-hidden="true">
+      <g class="cheers-cup cheers-left">
+        <path d="M28 52 h104 v62 a20 20 0 0 1 -20 20 H48 a20 20 0 0 1 -20 -20 z" fill="#5c8a3c"/>
+        <path d="M28 66 h-6 a10 10 0 0 0 0 20 h6" fill="none" stroke="#5c8a3c" stroke-width="6"/>
+        <ellipse cx="80" cy="52" rx="52" ry="9" fill="#8fbf5f"/>
+        <circle cx="62" cy="92" r="4" fill="#f7f3df"/><circle cx="98" cy="92" r="4" fill="#f7f3df"/>
+        <path d="M74 103 q6 5 12 0" stroke="#f7f3df" stroke-width="3.2" fill="none" stroke-linecap="round"/>
+        <circle cx="48" cy="102" r="6" fill="#e89ab4" opacity=".9"/><circle cx="112" cy="102" r="6" fill="#e89ab4" opacity=".9"/>
+        <path d="M96 30 q3 -12 12 -16" stroke="#38602a" stroke-width="4" fill="none" stroke-linecap="round"/>
+        <ellipse cx="113" cy="15" rx="9" ry="5" fill="#38602a" transform="rotate(-32 113 15)"/>
+      </g>
+      <g class="cheers-cup cheers-right">
+        <path d="M188 52 h104 v62 a20 20 0 0 1 -20 20 h-64 a20 20 0 0 1 -20 -20 z" fill="#7fb069"/>
+        <path d="M292 66 h6 a10 10 0 0 1 0 20 h-6" fill="none" stroke="#7fb069" stroke-width="6"/>
+        <ellipse cx="240" cy="52" rx="52" ry="9" fill="#a9cf7a"/>
+        <path d="M216 88 q4 -5 8 0" stroke="#22331a" stroke-width="3.2" fill="none" stroke-linecap="round"/>
+        <path d="M256 88 q4 -5 8 0" stroke="#22331a" stroke-width="3.2" fill="none" stroke-linecap="round"/>
+        <path d="M233 100 q7 6 14 0" stroke="#22331a" stroke-width="3.2" fill="none" stroke-linecap="round"/>
+        <circle cx="208" cy="99" r="6" fill="#e89ab4" opacity=".9"/><circle cx="272" cy="99" r="6" fill="#e89ab4" opacity=".9"/>
+        <path d="M224 30 q-3 -12 -12 -16" stroke="#38602a" stroke-width="4" fill="none" stroke-linecap="round"/>
+        <ellipse cx="207" cy="15" rx="9" ry="5" fill="#38602a" transform="rotate(32 207 15)"/>
+      </g>
+      <g class="cheers-spark" fill="#d9a441">
+        <path d="M160 18 l3.4 8.6 8.6 3.4 -8.6 3.4 -3.4 8.6 -3.4 -8.6 -8.6 -3.4 8.6 -3.4z"/>
+        <circle cx="138" cy="46" r="3"/><circle cx="184" cy="42" r="2.6"/>
+      </g>
+      <path class="cheers-spark" d="M160 62 c-3 -6 -14 -4 -14 3 c0 6 8 9 14 14 c6 -5 14 -8 14 -14 c0 -7 -11 -9 -14 -3z" fill="#e89ab4"/>
+    </svg>`;
+
+    /* ---------- Topic knowledge base (suggestion engine) ---------- */
+    const TOPICS = [
+      { triggers: ["machine learning", "artificial intelligence", "deep learning", "neural network", " ai ", "ai research", "ai systems"], topics: ["machine learning", "neural networks", "natural language processing", "AI for healthcare"], depts: ["Computer Science", "Statistics", "Electrical & Computer Engineering"] },
+      { triggers: ["data science", "data analytics", "big data", "data analysis", "statistical modeling", "statistics"], topics: ["data science", "statistical learning", "data visualization"], depts: ["Statistics", "Computer Science", "Information Systems"] },
+      { triggers: ["natural language", "nlp", "language models", "llm", "chatbot"], topics: ["natural language processing", "large language models", "conversational AI"], depts: ["Computer Science", "Linguistics"] },
+      { triggers: ["computer vision", "image recognition", "vision"], topics: ["computer vision", "image processing", "visual recognition"], depts: ["Computer Science", "Electrical & Computer Engineering"] },
+      { triggers: ["robotics", "robot", "automation", "drones", "autonomous"], topics: ["robotics", "control systems", "mechatronics"], depts: ["Mechanical Engineering", "Electrical & Computer Engineering", "Computer Science"] },
+      { triggers: ["cybersecurity", "security", "privacy", "cryptography", "hacking"], topics: ["cybersecurity", "privacy", "cryptography", "network security"], depts: ["Computer Science", "Information Systems"] },
+      { triggers: ["software engineering", "software development", "programming", "web development", "app development"], topics: ["software engineering", "distributed systems", "human-computer interaction"], depts: ["Computer Science", "Information Systems"] },
+      { triggers: ["hci", "user experience", "ux", "user interface", "product design", "interaction design"], topics: ["human-computer interaction", "UX research", "interaction design"], depts: ["Computer Science", "Information Science", "Design"] },
+      { triggers: ["neuroscience", "brain", "cognitive", "neuro"], topics: ["neuroscience", "cognitive science", "neuroimaging"], depts: ["Psychology", "Neuroscience", "Biology"] },
+      { triggers: ["psychology", "behavior", "behaviour", "mental health", "counseling"], topics: ["behavioral psychology", "social psychology", "developmental psychology", "mental health research"], depts: ["Psychology"] },
+      { triggers: ["biology", "genetics", "genomics", "molecular", "cells", "biochem"], topics: ["molecular biology", "genomics", "genetics", "cell biology"], depts: ["Biology", "Biochemistry & Molecular Biology"] },
+      { triggers: ["chemistry", "chemical", "materials science", "nanotechnology"], topics: ["organic chemistry", "materials chemistry", "nanotechnology"], depts: ["Chemistry", "Materials Science & Engineering"] },
+      { triggers: ["physics", "quantum", "astrophysics", "astronomy"], topics: ["quantum physics", "astrophysics", "condensed matter physics"], depts: ["Physics & Astronomy"] },
+      { triggers: ["climate", "environment", "sustainability", "ecology", "conservation", "renewable"], topics: ["climate science", "environmental policy", "sustainability", "ecology"], depts: ["Environmental Science", "Geography", "Atmospheric Sciences"] },
+      { triggers: ["public health", "epidemiology", "healthcare", "health care", "medicine", "medical", "biomedical", "pre-med", "premed", "nursing"], topics: ["public health", "epidemiology", "health informatics", "biomedical research"], depts: ["Public Health", "Medicine", "Biomedical Engineering"] },
+      { triggers: ["economics", "econometrics", "economic"], topics: ["economics", "econometrics", "behavioral economics"], depts: ["Economics"] },
+      { triggers: ["finance", "investing", "investment", "accounting", "fintech", "banking"], topics: ["corporate finance", "financial analytics", "fintech", "accounting research"], depts: ["Finance", "Accounting"] },
+      { triggers: ["marketing", "advertising", "consumer", "brand"], topics: ["marketing analytics", "consumer behavior", "digital marketing"], depts: ["Marketing", "Business Administration"] },
+      { triggers: ["entrepreneurship", "startup", "management", "business strategy", "organizational"], topics: ["entrepreneurship", "organizational behavior", "business strategy"], depts: ["Management", "Business Administration"] },
+      { triggers: ["education", "teaching", "learning sciences", "edtech", "curriculum"], topics: ["learning sciences", "educational technology", "curriculum studies"], depts: ["Education"] },
+      { triggers: ["mathematics", "math", "applied math", "operations research"], topics: ["applied mathematics", "operations research", "mathematical modeling"], depts: ["Mathematics", "Statistics"] },
+      { triggers: ["linguistics", "language acquisition", "sociolinguistics"], topics: ["computational linguistics", "sociolinguistics", "language acquisition"], depts: ["Linguistics"] },
+      { triggers: ["mechanical engineering", "aerospace", "automotive"], topics: ["mechanical design", "thermodynamics", "aerospace engineering"], depts: ["Mechanical Engineering", "Aerospace Engineering"] },
+      { triggers: ["electrical engineering", "circuits", "signal processing", "semiconductor"], topics: ["signal processing", "embedded systems", "semiconductors"], depts: ["Electrical & Computer Engineering"] },
+      { triggers: ["civil engineering", "structural", "transportation", "urban planning"], topics: ["structural engineering", "transportation systems", "urban planning"], depts: ["Civil Engineering"] },
+      { triggers: ["journalism", "media studies", "communications", "film"], topics: ["media studies", "science communication", "digital media"], depts: ["Communication"] },
+      { triggers: ["history", "political science", "public policy", "international relations", "sociology"], topics: ["public policy", "political science", "sociology"], depts: ["Political Science", "Sociology", "Public Affairs"] }
+    ];
+    const ALL_DEPTS = Array.from(new Set(TOPICS.flatMap((t) => t.depts))).sort();
+
+    const STOPWORDS = new Set(("a,an,the,and,or,of,to,in,for,with,on,at,by,from,as,is,am,are,was,were,be,been,i,im,i'm,my,me,we,our,you,your,who,that,this,these,those,it,its,into,about,over,under,after,before,between,want,wants,wanted,hope,hoping,hopefully,like,love,interested,interest,interests,looking,look,find,finding,get,getting,work,working,works,experience,experiences,opportunity,opportunities,career,careers,job,jobs,role,roles,field,fields,area,areas,ideally,eventually,goal,goals,dream,school,schools,university,college,student,students,undergraduate,junior,senior,sophomore,freshman,year,years,some,really,very,just,also,more,most,help,helping,learn,learning,gain,gaining,build,building,develop,developing,use,using,used,skills,skill,study,studying,studies,research,researching,professor,professors,faculty,lab,labs,team,teams,people,person,someone,something,anything,everything,way,ways,thing,things,lot,lots,bit,kind,sort,type,make,making,made,take,taking,go,going,went,come,one,two,get,got,especially,particularly,specifically,generally,currently,now,future,long,term,short,well,good,great,best,better,new,able,can,could,would,should,will,shall,may,might,do,does,did,have,has,had,having,there,here,what,when,where,which,while,than,then,too,very,much,many,later,apply,applying,applied,join,joining,joined,pursue,pursuing,seek,seeking,aim,aiming,plan,planning,plans,grad,graduate,admission,admissions,application,applications").split(","));
+
+    /* ---------- State + persistence ---------- */
+    const STORAGE_KEY = "match-a-chat:v2";
+    const state = {
+      step: 1, maxStep: 1,
+      filter: "all",
+      profile: { name: "", university: "", location: "", domain: "", linkedin: "", goals: "", resume: "" },
+      keywords: [],
+      leads: []
+    };
+    let storageOK = true;
+    try { localStorage.setItem("mac:test", "1"); localStorage.removeItem("mac:test"); } catch (e) { storageOK = false; }
+
+    const save = (() => {
+      let t = null;
+      return function save() {
+        if (!storageOK) return;
+        clearTimeout(t);
+        t = setTimeout(() => {
+          try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify({
+              step: state.step, maxStep: state.maxStep, filter: state.filter,
+              profile: state.profile, keywords: state.keywords, leads: state.leads
+            }));
+          } catch (e) { /* quota or private mode — ignore */ }
+        }, 250);
+      };
+    })();
+    function loadSaved() {
+      if (!storageOK) return false;
+      let raw;
+      try { raw = localStorage.getItem(STORAGE_KEY); } catch (e) { return false; }
+      if (!raw) return false;
+      try {
+        const d = JSON.parse(raw);
+        if (!d || typeof d !== "object") return false;
+        Object.assign(state.profile, d.profile || {});
+        state.keywords = Array.isArray(d.keywords) ? d.keywords : [];
+        state.leads = Array.isArray(d.leads) ? d.leads.map(normalizeLead) : [];
+        state.maxStep = Math.min(Math.max(Number(d.maxStep) || 1, 1), 4);
+        state.step = Math.min(Math.max(Number(d.step) || 1, 1), state.maxStep);
+        state.filter = ["all", "not-contacted", "sent", "replied"].includes(d.filter) ? d.filter : "all";
+        return state.keywords.length > 0 || state.leads.length > 0 || !!state.profile.name;
+      } catch (e) { return false; }
+    }
+    function normalizeLead(l) {
+      return {
+        id: l.id || uid(),
+        name: l.name || "", title: l.title || "", email: l.email || "", url: l.url || "",
+        interests: l.interests || "", pub: l.pub || "", pubmeta: l.pubmeta || "",
+        status: ["not-contacted", "sent", "replied"].includes(l.status) ? l.status : "not-contacted",
+        sentDate: l.sentDate || "", notes: l.notes || "",
+        draftSubject: l.draftSubject != null ? l.draftSubject : null,
+        draftBody: l.draftBody != null ? l.draftBody : null
+      };
+    }
+
+    /* ---------- Toast ---------- */
+    let toastTimer = null;
+    function toast(msg) {
+      const t = $("#toast");
+      t.innerHTML = CHEERS_SVG.replace('width="240" height="150"', 'width="52" height="33"') + "<span>" + esc(msg) + "</span>";
+      t.classList.add("show");
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => t.classList.remove("show"), 3400);
+    }
+
+    /* ---------- Loader ---------- */
+    function whiskThen(caption, sub, ms, after) {
+      $("#loader-caption").textContent = caption;
+      $("#loader-sub").textContent = sub;
+      $("#loader").classList.add("show");
+      setTimeout(() => { $("#loader").classList.remove("show"); after(); }, ms);
+    }
+
+    /* ---------- Step navigation ---------- */
+    function showStep(n, opts) {
+      opts = opts || {};
+      state.step = n;
+      state.maxStep = Math.max(state.maxStep, n);
+      $$(".step-panel").forEach((p) => p.classList.toggle("active", p.id === "panel-" + n));
+      $$("#stepper button").forEach((b) => {
+        const s = Number(b.dataset.step);
+        b.classList.toggle("active", s === n);
+        b.classList.toggle("done", s < n);
+        b.disabled = s > state.maxStep;
+        b.setAttribute("aria-current", s === n ? "step" : "false");
+      });
+      if (!opts.noScroll) window.scrollTo({ top: 0, behavior: "smooth" });
+      if (n === 3) renderSearchLinks();
+      if (n === 4) renderDashboard();
+      const panel = $("#panel-" + n);
+      if (panel && !opts.noFocus) panel.focus({ preventScroll: true });
+      save();
+    }
+    $("#stepper").addEventListener("click", (e) => {
+      const b = e.target.closest("button[data-step]");
+      if (b && !b.disabled) showStep(Number(b.dataset.step));
+    });
+    $$("[data-goto]").forEach((b) => b.addEventListener("click", () => showStep(Number(b.dataset.goto))));
+
+    /* ---------- In-page modal (native dialogs are blocked in embedded frames) ---------- */
+    function askDialog(message) {
+      return new Promise((resolve) => {
+        const backdrop = $("#dialog-el");
+        $("#dialog-msg").textContent = message;
+        backdrop.classList.add("show");
+        const okBtn = $("#dialog-ok"), cancelBtn = $("#dialog-cancel");
+        const done = (val) => {
+          backdrop.classList.remove("show");
+          okBtn.removeEventListener("click", onOk);
+          cancelBtn.removeEventListener("click", onCancel);
+          backdrop.removeEventListener("click", onBackdrop);
+          document.removeEventListener("keydown", onKey);
+          resolve(val);
+        };
+        const onOk = () => done(true);
+        const onCancel = () => done(false);
+        const onBackdrop = (e) => { if (e.target === backdrop) done(false); };
+        const onKey = (e) => { if (e.key === "Escape") done(false); };
+        okBtn.addEventListener("click", onOk);
+        cancelBtn.addEventListener("click", onCancel);
+        backdrop.addEventListener("click", onBackdrop);
+        document.addEventListener("keydown", onKey);
+        cancelBtn.focus();
+      });
+    }
+
+    /* ---------- Clear all ---------- */
+    $("#btn-clear-all").addEventListener("click", async () => {
+      if (!(await askDialog("Start fresh? This clears your profile, keywords, and all leads saved in this browser. This can't be undone."))) return;
+      try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
+      location.reload();
+    });
+
+    /* ---------- Step 1 : profile ---------- */
+    function collectProfile() {
+      state.profile = {
+        name: $("#in-name").value.trim(),
+        university: $("#in-uni").value.trim(),
+        location: $("#in-loc").value.trim(),
+        domain: $("#in-domain").value.trim().replace(/^https?:\/\//i, "").replace(/\/.*$/, "").toLowerCase(),
+        linkedin: $("#in-linkedin").value.trim(),
+        goals: $("#in-goals").value.trim(),
+        resume: $("#in-resume").value.trim()
+      };
+      save();
+    }
+    function markField(id, bad) { $("#" + id).classList.toggle("error", bad); return !bad; }
+
+    // live-save profile edits
+    ["in-name", "in-uni", "in-loc", "in-domain", "in-linkedin", "in-goals", "in-resume"].forEach((id) => {
+      document.addEventListener("input", (e) => { if (e.target.id === id) collectProfile(); });
+    });
+
+    $("#btn-whisk").addEventListener("click", () => {
+      collectProfile();
+      let ok = true;
+      ok = markField("f-name", !state.profile.name) && ok;
+      ok = markField("f-uni", !state.profile.university) && ok;
+      ok = markField("f-goals", state.profile.goals.length < 12) && ok;
+      if (!ok) { toast("A couple of fields still need filling in"); return; }
+      whiskThen("Whisking up your keywords…", "Reading your goals and blending topics", 2100, () => {
+        state.keywords = suggestKeywords(state.profile.goals);
+        renderChips();
+        showStep(2);
+      });
+    });
+
+    /* ---------- Step 2 : keyword engine ---------- */
+    function suggestKeywords(goals) {
+      const text = " " + goals.toLowerCase().replace(/[^a-z0-9+#&'’\- ]/g, " ") + " ";
+      const out = [];
+      const seen = new Set();
+      const push = (term, dept, source) => {
+        const key = term.toLowerCase();
+        if (seen.has(key) || term.length < 3) return;
+        seen.add(key);
+        out.push({ id: uid(), term, dept: dept || "", source });
+      };
+      TOPICS.forEach((cluster) => {
+        if (cluster.triggers.some((t) => text.includes(t))) {
+          cluster.topics.forEach((topic, i) => push(topic, cluster.depts[Math.min(i, cluster.depts.length - 1)], "suggested"));
+        }
+      });
+      const words = text.split(/\s+/).filter(Boolean);
+      const phrases = new Map();
+      for (let n = 3; n >= 2; n--) {
+        for (let i = 0; i + n <= words.length; i++) {
+          const gram = words.slice(i, i + n);
+          if (gram.every((w) => !STOPWORDS.has(w) && w.length > 2)) {
+            const p = gram.join(" ");
+            phrases.set(p, (phrases.get(p) || 0) + (n === 3 ? 2 : 1));
+          }
+        }
+      }
+      Array.from(phrases.entries())
+        .sort((a, b) => b[1] - a[1])
+        .filter(([p]) => !out.some((k) => k.term.includes(p) || p.includes(k.term)))
+        .slice(0, 6)
+        .forEach(([p]) => push(p, "", "you"));
+      if (out.length < 4) {
+        const freq = new Map();
+        words.forEach((w) => { if (!STOPWORDS.has(w) && w.length > 3) freq.set(w, (freq.get(w) || 0) + 1); });
+        Array.from(freq.entries()).sort((a, b) => b[1] - a[1]).filter(([w]) => !out.some((k) => k.term.includes(w))).slice(0, 5).forEach(([w]) => push(w, "", "you"));
+      }
+      return out.slice(0, 18);
+    }
+
+    function chipHTML(k) {
+      return `<span class="chip ${k.source === "you" ? "from-you" : ""}" data-chip="${k.id}">
+        ${esc(k.term)}${k.dept ? `<span class="dept">${esc(k.dept)}</span>` : ""}
+        <button type="button" aria-label="Remove keyword ${esc(k.term)}" data-remove-kw="${k.id}">×</button>
+      </span>`;
+    }
+    function renderChips() {
+      const sug = state.keywords.filter((k) => k.source !== "you");
+      const own = state.keywords.filter((k) => k.source === "you");
+      $("#chips-suggested").innerHTML = sug.length ? sug.map(chipHTML).join("") : '<span class="small">No suggested keywords left — add your own below.</span>';
+      $("#own-wrap").style.display = own.length ? "" : "none";
+      $("#chips-own").innerHTML = own.map(chipHTML).join("");
+      $("#kw-count").textContent = state.keywords.length
+        ? state.keywords.length + " keyword" + (state.keywords.length === 1 ? "" : "s") + " in your blend."
+        : "Your blend is empty — searches and ranking need at least one keyword.";
+    }
+    document.addEventListener("click", (e) => {
+      const rm = e.target.closest("[data-remove-kw]");
+      if (rm) {
+        state.keywords = state.keywords.filter((k) => k.id !== rm.dataset.removeKw);
+        renderChips(); save();
+      }
+    });
+    function addCustomKeyword() {
+      const term = $("#in-newkw").value.trim().toLowerCase();
+      if (!term) return;
+      if (state.keywords.some((k) => k.term.toLowerCase() === term)) { toast("That keyword is already in your blend"); return; }
+      state.keywords.push({ id: uid(), term, dept: $("#in-newkw-dept").value, source: "custom" });
+      $("#in-newkw").value = "";
+      renderChips(); save();
+    }
+    $("#btn-addkw").addEventListener("click", addCustomKeyword);
+    $("#in-newkw").addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); addCustomKeyword(); } });
+
+    function deptSearchURL(keyword, dept) {
+      const p = state.profile;
+      let q;
+      if (p.domain) q = `site:${p.domain} "${keyword}" ${dept || ""} faculty profile`.replace(/\s+/g, " ");
+      else q = `"${p.university}" ${dept || ""} "${keyword}" faculty profile`;
+      return "https://www.google.com/search?q=" + encodeURIComponent(q.trim());
+    }
+    function csvCell(v) { v = String(v == null ? "" : v); return /[",\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; }
+    function downloadCSV(filename, rows) {
+      const text = rows.map((r) => r.map(csvCell).join(",")).join("\r\n");
+      const blob = new Blob(["\uFEFF" + text], { type: "text/csv;charset=utf-8" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = filename;
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+    }
+    function keywordRows() {
+      const rows = [["keyword", "department site to search"]];
+      state.keywords.forEach((k) => {
+        if (k.dept) rows.push([k.term, deptSearchURL(k.term, k.dept)]);
+        else {
+          const depts = TOPICS.filter((c) => c.topics.some((t) => t.toLowerCase() === k.term.toLowerCase())).flatMap((c) => c.depts);
+          const uniq = Array.from(new Set(depts));
+          if (uniq.length) uniq.forEach((d) => rows.push([k.term, deptSearchURL(k.term, d)]));
+          else rows.push([k.term, deptSearchURL(k.term, "")]);
+        }
+      });
+      return rows;
+    }
+    $("#btn-csv").addEventListener("click", () => {
+      if (!state.keywords.length) { toast("Add at least one keyword first"); return; }
+      downloadCSV("match-a-chat-keywords.csv", keywordRows());
+      toast("CSV downloaded — cheers!");
+    });
+    $("#btn-to-step3").addEventListener("click", () => {
+      if (!state.keywords.length) { toast("Your blend is empty — keep or add at least one keyword"); return; }
+      showStep(3);
+    });
+
+    /* ---------- Step 3 : search links ---------- */
+    function renderSearchLinks() {
+      const p = state.profile;
+      const box = $("#search-links");
+      if (!state.keywords.length) {
+        box.innerHTML = `<div class="empty-state">${CHEERS_SVG}<p>No keywords yet — head back to Step 2 and build your blend first.</p></div>`;
+        return;
+      }
+      box.innerHTML = state.keywords.map((k, i) => {
+        const links = [];
+        links.push({ kind: p.domain ? "University site" : "Web search", label: `Faculty matching “${k.term}”${k.dept ? " — " + k.dept : ""}`, url: deptSearchURL(k.term, k.dept) });
+        if (p.domain) links.push({ kind: "Directory", label: `People directory results for “${k.term}”`, url: "https://www.google.com/search?q=" + encodeURIComponent(`site:${p.domain} "${k.term}" (professor OR faculty OR "assistant professor")`) });
+        links.push({ kind: "Scholar", label: `Publications on “${k.term}” from ${p.university}`, url: "https://scholar.google.com/scholar?q=" + encodeURIComponent(`"${k.term}" "${p.university}"`) });
+        links.push({ kind: "Web search", label: `“${k.term}” professors near ${p.location || p.university}`, url: "https://www.google.com/search?q=" + encodeURIComponent(`"${k.term}" professor "${p.university}" research lab`) });
+        return `<details class="linkgroup" ${i === 0 ? "open" : ""}>
+          <summary>${esc(k.term)}${k.dept ? ` <span class="small">· ${esc(k.dept)}</span>` : ""}<span class="chev">▾</span></summary>
+          <ul class="linklist">${links.map((l) => `<li><a href="${esc(l.url)}" target="_blank" rel="noopener noreferrer"><span class="kind">${esc(l.kind)}</span>${esc(l.label)}<span class="arrow">↗</span></a></li>`).join("")}</ul>
+        </details>`;
+      }).join("");
+    }
+
+    /* ---------- Step 3 : leads ---------- */
+    $("#btn-parse").addEventListener("click", () => {
+      const raw = $("#in-paste").value;
+      if (!raw.trim()) { toast("Paste some profile text first"); return; }
+      const email = raw.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/);
+      const url = raw.match(/https?:\/\/[^\s)]+/);
+      const lines = raw.split(/\n+/).map((l) => l.trim()).filter(Boolean);
+      let filled = [];
+      if (email) { $("#in-lead-email").value = email[0]; filled.push("email"); }
+      if (url) { $("#in-lead-url").value = url[0]; filled.push("profile link"); }
+      if (lines.length && !$("#in-lead-name").value.trim()) {
+        const nameLine = lines.find((l) => l.length >= 3 && l.length <= 60 && !/@/.test(l) && !/^https?/.test(l));
+        if (nameLine) { $("#in-lead-name").value = nameLine.replace(/\|.*$/, "").trim(); filled.push("name"); }
+      }
+      if (lines.length > 1 && !$("#in-lead-interests").value.trim()) {
+        const interestLine = lines.filter((l) => l.length > 40 && !/@/.test(l)).sort((a, b) => b.length - a.length)[0];
+        if (interestLine) { $("#in-lead-interests").value = interestLine; filled.push("interests"); }
+      }
+      toast(filled.length ? "Filled in: " + filled.join(", ") + " — check it over" : "Couldn't spot an email or link in that paste");
+    });
+
+    $("#btn-addlead").addEventListener("click", async () => {
+      const name = $("#in-lead-name").value.trim();
+      if (!markField("f-leadname", !name)) { toast("A lead needs a name"); return; }
+      const email = $("#in-lead-email").value.trim();
+      const dupe = state.leads.find((l) =>
+        (email && l.email && l.email.toLowerCase() === email.toLowerCase()) ||
+        l.name.toLowerCase() === name.toLowerCase());
+      if (dupe && !(await askDialog(`You already have a lead named “${dupe.name}”. Add another anyway?`))) return;
+      const lead = normalizeLead({
+        id: uid(), name,
+        title: $("#in-lead-title").value.trim(),
+        email,
+        url: $("#in-lead-url").value.trim(),
+        interests: $("#in-lead-interests").value.trim(),
+        pub: $("#in-lead-pub").value.trim(),
+        pubmeta: $("#in-lead-pubmeta").value.trim(),
+        status: "not-contacted"
+      });
+      lead.draftSubject = genSubject(lead);
+      lead.draftBody = genBody(lead);
+      state.leads.push(lead);
+      ["in-lead-name", "in-lead-title", "in-lead-email", "in-lead-url", "in-lead-interests", "in-lead-pub", "in-lead-pubmeta", "in-paste"].forEach((id) => { $("#" + id).value = ""; });
+      renderLeadsMini(); save();
+      $("#in-lead-name").focus();
+      toast(name + " added — cheers!");
+    });
+
+    function renderLeadsMini() {
+      const box = $("#leads-list");
+      if (!state.leads.length) {
+        box.innerHTML = `<div class="empty-state">${CHEERS_SVG}<p>No leads yet. Run a search above, find someone whose work excites you, and add them here — your ranked dashboard brews from this list.</p></div>`;
+        return;
+      }
+      box.innerHTML = state.leads.map((l) => `
+        <div class="lead-mini">
+          <div class="who"><b>${esc(l.name)}</b>
+            <div class="sub">${esc([l.title, l.email].filter(Boolean).join(" · ") || "No title or email yet")}</div>
+            ${l.pub ? `<div class="sub">Recent work: “${esc(l.pub)}”${l.pubmeta ? " (" + esc(l.pubmeta) + ")" : ""}</div>` : ""}
+          </div>
+          <button type="button" class="remove" data-remove-lead="${l.id}">Remove</button>
+        </div>`).join("");
+    }
+    document.addEventListener("click", async (e) => {
+      const rm = e.target.closest("[data-remove-lead]");
+      if (rm) {
+        const l = state.leads.find((x) => x.id === rm.dataset.removeLead);
+        if (l && !(await askDialog(`Remove ${l.name}? Their draft and notes will be lost.`))) return;
+        state.leads = state.leads.filter((x) => x.id !== rm.dataset.removeLead);
+        renderLeadsMini(); save();
+        if (state.step === 4) renderDashboard();
+      }
+    });
+    $("#btn-to-step4").addEventListener("click", () => {
+      if (!state.leads.length) { toast("Add at least one lead first — the dashboard needs someone to rank"); return; }
+      whiskThen("Brewing your dashboard…", "Ranking leads against your keywords", 1300, () => showStep(4));
+    });
+
+    /* ---------- Step 4 : scoring & drafts ---------- */
+    function termMatches(term, text) {
+      const t = term.toLowerCase().trim();
+      const hay = " " + text.toLowerCase() + " ";
+      if (t.length <= 3) return new RegExp("\\b" + t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "\\b").test(hay);
+      if (hay.includes(t)) return true;
+      const words = t.split(/\s+/).filter((w) => w.length > 3 && !STOPWORDS.has(w));
+      return words.length >= 2 && words.every((w) => hay.includes(w));
+    }
+    function scoreLead(lead) {
+      const hay = [lead.interests, lead.title, lead.pub].join(" \n ");
+      const matched = state.keywords.filter((k) => termMatches(k.term, hay)).map((k) => k.term);
+      const total = Math.max(state.keywords.length, 1);
+      return { matched, count: matched.length, ratio: matched.length / total };
+    }
+    function tierFor(score) {
+      if (score.count === 0) return { cls: "tier-none", label: "No keyword overlap yet" };
+      if (score.ratio >= 0.5 || score.count >= 4) return { cls: "tier-strong", label: "Strong match" };
+      if (score.ratio >= 0.25 || score.count >= 2) return { cls: "tier-good", label: "Good match" };
+      return { cls: "tier-light", label: "Light match" };
+    }
+    function salutation(lead) {
+      const last = lead.name.replace(/^(Dr\.?|Prof\.?|Professor|Mr\.?|Ms\.?|Mrs\.?)\s+/i, "").split(/\s+/).pop();
+      if (/professor/i.test(lead.title) || /^prof/i.test(lead.name)) return "Professor " + last;
+      if (/\bdr\b/i.test(lead.title) || /^dr/i.test(lead.name)) return "Dr. " + last;
+      return lead.name.replace(/^(Dr\.?|Prof\.?)\s+/i, "");
+    }
+    function firstSentence(text, max) {
+      const clean = String(text || "").replace(/\s+/g, " ").trim();
+      if (!clean) return "";
+      const cut = clean.split(/(?<=[.!?])\s+/)[0];
+      const s = cut.length > 40 ? cut : clean;
+      return s.length > max ? s.slice(0, max - 1).trimEnd() + "…" : s;
+    }
+    function resumeLine(lead) {
+      const resume = state.profile.resume;
+      if (!resume) return "";
+      const score = scoreLead(lead);
+      const sentences = resume.replace(/\s+/g, " ").split(/(?<=[.!?])\s+/).filter((s) => s.trim().length > 25);
+      const hit = sentences.find((s) => score.matched.some((m) => termMatches(m, s)));
+      const pick = hit || sentences[0] || resume.replace(/\s+/g, " ").trim();
+      return pick && pick.length > 220 ? pick.slice(0, 219).trimEnd() + "…" : pick;
+    }
+    function genSubject(lead) {
+      const score = scoreLead(lead);
+      const topic = score.matched[0] || firstTopicWord(lead);
+      return `Undergraduate interested in your research on ${topic} — coffee chat?`;
+    }
+    function firstTopicWord(lead) {
+      const fromInterests = (lead.interests || "").split(/[,;]/)[0].trim();
+      return fromInterests || "your field";
+    }
+    function genBody(lead) {
+      const p = state.profile;
+      const score = scoreLead(lead);
+      const matchedTxt = score.matched.length ? score.matched.slice(0, 3).join(", ") : firstTopicWord(lead);
+      const goalLine = firstSentence(p.goals, 220);
+      const rLine = resumeLine(lead);
+      const lines = [];
+      lines.push(`Dear ${salutation(lead)},`);
+      lines.push("");
+      lines.push(`My name is ${p.name}, and I'm an undergraduate at ${p.university}${p.location ? " in " + p.location : ""}. ${goalLine}`);
+      if (rLine) { lines.push(""); lines.push(`From my resume: ${rLine}`); }
+      lines.push("");
+      if (lead.pub) {
+        lines.push(`I recently came across your publication, "${lead.pub}"${lead.pubmeta ? " (" + lead.pubmeta + ")" : ""}, and it stood out to me because it connects with my interest in ${matchedTxt}. I'd love to hear what questions you're exploring next and how undergraduate researchers fit into your work.`);
+      } else {
+        lines.push(`I found your profile while looking into ${matchedTxt} at ${p.university}, and your research interests line up closely with where I hope to head. I'd love to hear how you got into this area and what you look for in undergraduate researchers.`);
+      }
+      lines.push("");
+      lines.push("Would you be open to a brief 15–20 minute coffee chat sometime in the next couple of weeks? I'm glad to work around your schedule — and the coffee's on me.");
+      lines.push("");
+      lines.push("Thank you for your time,");
+      lines.push(p.name);
+      if (p.linkedin) lines.push(p.linkedin);
+      return lines.join("\n");
+    }
+
+    function daysSince(dateStr) {
+      if (!dateStr) return null;
+      const d = new Date(dateStr + "T00:00:00");
+      if (isNaN(d)) return null;
+      const today = new Date(); today.setHours(0, 0, 0, 0);
+      return Math.round((today - d) / 86400000);
+    }
+    function mailtoFor(lead) {
+      if (!lead.email) return "";
+      let body = lead.draftBody || "";
+      // Guard very long mailto URLs (some clients truncate past ~1800 chars)
+      if (body.length > 1600) body = body.slice(0, 1580) + "\n\n[Draft trimmed for your mail app — copy the full version with “Copy email”.]";
+      return "mailto:" + encodeURIComponent(lead.email) + "?subject=" + encodeURIComponent(lead.draftSubject || "") + "&body=" + encodeURIComponent(body);
+    }
+
+    $("#dash-filter").addEventListener("click", (e) => {
+      const b = e.target.closest("button[data-filter]");
+      if (!b) return;
+      state.filter = b.dataset.filter;
+      $$("#dash-filter button").forEach((x) => x.setAttribute("aria-pressed", x === b ? "true" : "false"));
+      renderDashboard(); save();
+    });
+
+    function renderDashboard() {
+      const box = $("#dashboard");
+      const strip = $("#summary-strip");
+      $$("#dash-filter button").forEach((x) => x.setAttribute("aria-pressed", x.dataset.filter === state.filter ? "true" : "false"));
+      if (!state.leads.length) {
+        strip.innerHTML = "";
+        box.innerHTML = `<div class="empty-state">${CHEERS_SVG}<p>Nothing to rank yet — add some leads in Step 3 and they'll appear here, best match first, each with a ready-to-edit email draft.</p></div>`;
+        return;
+      }
+      const scored = state.leads.map((l) => ({ lead: l, score: scoreLead(l) }))
+        .sort((a, b) => b.score.count - a.score.count || b.score.ratio - a.score.ratio);
+      const counts = { total: state.leads.length, sent: 0, replied: 0, strong: scored.filter((s) => tierFor(s.score).cls === "tier-strong").length };
+      state.leads.forEach((l) => { if (l.status === "sent") counts.sent++; if (l.status === "replied") counts.replied++; });
+      strip.innerHTML = `
+        <div class="stat"><div class="num">${counts.total}</div><div class="lbl">leads ranked</div></div>
+        <div class="stat"><div class="num">${counts.strong}</div><div class="lbl">strong matches</div></div>
+        <div class="stat"><div class="num">${counts.sent}</div><div class="lbl">awaiting reply</div></div>
+        <div class="stat pink"><div class="num">${counts.replied}</div><div class="lbl">replies you've logged</div></div>`;
+
+      const visible = scored.filter(({ lead }) => state.filter === "all" || lead.status === state.filter);
+      if (!visible.length) {
+        box.innerHTML = `<div class="empty-state"><p>No leads in this view. Try the “All” filter.</p></div>`;
+        return;
+      }
+      box.innerHTML = visible.map(({ lead, score }) => {
+        const tier = tierFor(score);
+        const days = lead.status === "sent" ? daysSince(lead.sentDate) : null;
+        const nudge = (days != null && days >= 5)
+          ? `<div class="nudge">⏰ Sent ${days} day${days === 1 ? "" : "s"} ago — no reply logged yet. A gentle follow-up?</div>` : "";
+        return `<article class="lead-card" data-card="${lead.id}">
+          <div class="head">
+            <div class="who"><b>${esc(lead.name)}</b>
+              <div class="sub">${esc([lead.title, lead.email].filter(Boolean).join(" · "))}${lead.url ? ` · <a href="${esc(lead.url)}" target="_blank" rel="noopener noreferrer">Profile ↗</a>` : ""}</div>
+            </div>
+            <span class="tier ${tier.cls}">${tier.label} · ${score.count}/${state.keywords.length} keywords</span>
+          </div>
+          <div class="matchline">${score.matched.length ? "Matched keywords:" : "No keyword overlap yet — try adding their research terms as keywords in Step 2."}</div>
+          ${score.matched.length ? `<div class="match-chips">${score.matched.map((m) => `<span>${esc(m)}</span>`).join("")}</div>` : ""}
+          ${nudge}
+          <div class="status-toggle" role="group" aria-label="Outreach status for ${esc(lead.name)} — you set this yourself">
+            <button type="button" data-status="not-contacted" data-lead="${lead.id}" aria-pressed="${lead.status === "not-contacted"}">Not contacted</button>
+            <button type="button" data-status="sent" data-lead="${lead.id}" aria-pressed="${lead.status === "sent"}">I emailed them</button>
+            <button type="button" class="st-replied" data-status="replied" data-lead="${lead.id}" aria-pressed="${lead.status === "replied"}">They replied 🎉</button>
+          </div>
+          <div class="track-row">
+            <div class="field">
+              <label for="date-${lead.id}">Date you emailed</label>
+              <input type="date" id="date-${lead.id}" data-sent-date="${lead.id}" value="${esc(lead.sentDate || "")}" />
+            </div>
+            <div class="field notes">
+              <label for="notes-${lead.id}">Your notes</label>
+              <input type="text" id="notes-${lead.id}" data-notes="${lead.id}" value="${esc(lead.notes || "")}" placeholder="e.g. mentioned openings in spring, follow up after exams" />
+            </div>
+          </div>
+          <details class="draft" ${lead.status === "not-contacted" ? "open" : ""}>
+            <summary>✉️ Email draft — tap to ${lead.status === "not-contacted" ? "collapse" : "expand"} & edit</summary>
+            <div style="margin-top:12px">
+              ${lead.pub ? `<div class="pub-note" style="margin-top:0;margin-bottom:10px">Grounded in their recent publication: “${esc(lead.pub)}”${lead.pubmeta ? " (" + esc(lead.pubmeta) + ")" : ""}</div>` : `<div class="pub-note" style="margin-top:0;margin-bottom:10px">No publication on file — the draft leans on their listed interests. Add one in Step 3 for a stronger opener.</div>`}
+              <label for="subj-${lead.id}">Email subject</label>
+              <input type="text" id="subj-${lead.id}" data-draft-subject="${lead.id}" value="${esc(lead.draftSubject || "")}" />
+              <label for="body-${lead.id}" style="margin-top:10px">Email body — edit before you send</label>
+              <textarea id="body-${lead.id}" data-draft-body="${lead.id}">${esc(lead.draftBody || "")}</textarea>
+              <div class="row-actions">
+                <button type="button" class="btn btn-primary btn-small" data-copy="${lead.id}">Copy email</button>
+                ${lead.email
+                  ? `<a class="btn btn-ghost btn-small" data-mailto="${lead.id}" href="${esc(mailtoFor(lead))}">Open in mail app →</a>`
+                  : `<button type="button" class="btn btn-ghost btn-small" disabled title="Add an email for this lead in Step 3">Open in mail app (needs email)</button>`}
+                <button type="button" class="btn btn-ghost btn-small" data-regen="${lead.id}">Regenerate draft</button>
+                <button type="button" class="btn btn-ghost btn-small" data-remove-lead="${lead.id}">Remove lead</button>
+              </div>
+            </div>
+          </details>
+        </article>`;
+      }).join("");
+    }
+
+    document.addEventListener("input", (e) => {
+      const s = e.target.closest("[data-draft-subject]");
+      const b = e.target.closest("[data-draft-body]");
+      const d = e.target.closest("[data-sent-date]");
+      const n = e.target.closest("[data-notes]");
+      if (s) { const l = state.leads.find((x) => x.id === s.dataset.draftSubject); if (l) { l.draftSubject = s.value; save(); } }
+      if (b) { const l = state.leads.find((x) => x.id === b.dataset.draftBody); if (l) { l.draftBody = b.value; save(); } }
+      if (d) { const l = state.leads.find((x) => x.id === d.dataset.sentDate); if (l) { l.sentDate = d.value; save(); } }
+      if (n) { const l = state.leads.find((x) => x.id === n.dataset.notes); if (l) { l.notes = n.value; save(); } }
+    });
+    document.addEventListener("click", (e) => {
+      const st = e.target.closest("[data-status]");
+      if (st) {
+        const l = state.leads.find((x) => x.id === st.dataset.lead);
+        if (l) {
+          l.status = st.dataset.status;
+          if (l.status === "sent" && !l.sentDate) l.sentDate = new Date().toISOString().slice(0, 10);
+          renderDashboard(); save();
+          if (l.status === "replied") toast("Nice! Logged — time to schedule that coffee chat ☕");
+        }
+        return;
+      }
+      const cp = e.target.closest("[data-copy]");
+      if (cp) {
+        const l = state.leads.find((x) => x.id === cp.dataset.copy);
+        if (!l) return;
+        const text = "Subject: " + (l.draftSubject || "") + "\n\n" + (l.draftBody || "");
+        const done = () => toast("Email copied — paste it wherever you send from");
+        if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done).catch(() => fallbackCopy(text, done));
+        else fallbackCopy(text, done);
+        return;
+      }
+      const mt = e.target.closest("[data-mailto]");
+      if (mt) {
+        const l = state.leads.find((x) => x.id === mt.dataset.mailto);
+        if (l) mt.href = mailtoFor(l);
+        return;
+      }
+      const rg = e.target.closest("[data-regen]");
+      if (rg) {
+        const l = state.leads.find((x) => x.id === rg.dataset.regen);
+        if (l) { l.draftSubject = genSubject(l); l.draftBody = genBody(l); renderDashboard(); save(); toast("Fresh draft brewed for " + l.name); }
+      }
+    });
+    function fallbackCopy(text, done) {
+      const ta = document.createElement("textarea");
+      ta.value = text; ta.style.position = "fixed"; ta.style.opacity = "0";
+      document.body.appendChild(ta); ta.select();
+      try { document.execCommand("copy"); done(); } catch (err) { toast("Copy didn't work here — select the draft text manually"); }
+      ta.remove();
+    }
+
+    $("#btn-leads-csv").addEventListener("click", () => {
+      if (!state.leads.length) { toast("No leads to export yet"); return; }
+      const scored = state.leads.map((l) => ({ lead: l, score: scoreLead(l) }))
+        .sort((a, b) => b.score.count - a.score.count || b.score.ratio - a.score.ratio);
+      const statusLabel = { "not-contacted": "Not contacted", "sent": "Emailed (awaiting reply)", "replied": "Replied" };
+      const rows = [["name", "title/department", "email", "profile url", "match tier", "keywords matched", "matched keywords", "status", "date emailed", "notes", "recent publication"]];
+      scored.forEach(({ lead, score }) => {
+        rows.push([
+          lead.name, lead.title, lead.email, lead.url,
+          tierFor(score).label, score.count + "/" + state.keywords.length, score.matched.join("; "),
+          statusLabel[lead.status] || lead.status, lead.sentDate, lead.notes,
+          lead.pub + (lead.pubmeta ? " (" + lead.pubmeta + ")" : "")
+        ]);
+      });
+      downloadCSV("match-a-chat-leads.csv", rows);
+      toast("Leads exported — cheers!");
+    });
+
+    /* ---------- Hydrate form fields from saved state ---------- */
+    function hydrateProfileInputs() {
+      const p = state.profile;
+      $("#in-name").value = p.name || "";
+      $("#in-uni").value = p.university || "";
+      $("#in-loc").value = p.location || "";
+      $("#in-domain").value = p.domain || "";
+      $("#in-linkedin").value = p.linkedin || "";
+      $("#in-goals").value = p.goals || "";
+      $("#in-resume").value = p.resume || "";
+    }
+
+    /* ---------- Init ---------- */
+    $("#in-newkw-dept").innerHTML = '<option value="">Department to search (optional)</option>' + ALL_DEPTS.map((d) => `<option value="${esc(d)}">${esc(d)}</option>`).join("");
+
+    const restored = loadSaved();
+    hydrateProfileInputs();
+    renderChips();
+    renderLeadsMini();
+    if (restored) {
+      showStep(state.step, { noScroll: true, noFocus: true });
+      setTimeout(() => toast("Welcome back — picked up where you left off"), 400);
+    } else {
+      renderLeadsMini();
+    }
+  </script>
+</body>
+</html>
